@@ -1,26 +1,19 @@
 # clj-oops
 
-Oops, it has been created. :)
-
+Oops, it has been created. :)  
 OOP-System for functional language. Raw raw. Fight da power!
 
+Q: Is it mutable?  
+A: No. If you want field to be mutable, make that field ref or atom.
 
+Q: Is it thread-safe?  
+A: I think no, but it wasn't tested.
 
-Is it mutable?
+Q: Is it memory-safe?  
+A: Nope. Every object's metadata stored in IdentityHashMap, which holds strong reference to the object and it's metadata. So objects aren't gc'd.
 
-No. If you want field to be mutable, make that field ref or atom.
-
-Is it thread-safe?
-
-I think no, but it wasn't tested.
-
-Is it memory-safe?
-
-Nope. Every object's metadata stored in IdentityHashMap, which holds strong reference to the object and it's metadata. So objects aren't gc'd.
-
-Why would I even use it if it is that bad?
-
-It looks cool. You can make objects from basic types and use them as basic types, but with methods and fields. Or play with polymorphism and inheritance.
+Q: Why would I even use it if it is that bad?  
+A: It looks cool. You can make objects from basic types and use them as basic types, but with methods and fields. Or play with polymorphism and inheritance.
 
 ## Usage
 
