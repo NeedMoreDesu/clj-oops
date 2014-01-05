@@ -1,16 +1,25 @@
-<<<<<<< HEAD
 # clj-oops
 
 Oops, it has been created. :)
+
 OOP-System for functional language. Raw raw. Fight da power!
 
+
+
 Is it mutable?
+
 No. If you want field to be mutable, make that field ref or atom.
+
 Is it thread-safe?
+
 I think no, but it wasn't tested.
+
 Is it memory-safe?
+
 Nope. Every object's metadata stored in IdentityHashMap, which holds strong reference to the object and it's metadata. So objects aren't gc'd.
+
 Why would I even use it if it is that bad?
+
 It looks cool. You can make objects from basic types and use them as basic types, but with methods and fields. Or play with polymorphism and inheritance.
 
 ## Usage
@@ -68,6 +77,3 @@ the extent permitted by applicable law. You can redistribute it
 and/or modify it under the terms of the Do What The Fuck You Want
 To Public License, Version 2, as published by Sam Hocevar. See
 COPYING for more details.
-
-clojure object oriented programming system
->>>>>>> ab79958a345a5a8bdd7d392ac849c46145e2efda
