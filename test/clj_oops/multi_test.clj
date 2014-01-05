@@ -14,6 +14,9 @@
 
 (let [hello
       (mfn)]
+ (add-fn hello :default
+  (fn [arg]
+   "umm.. hi?"))
  (add-fn hello java.lang.Long
   (fn [arg]
    (str
@@ -34,6 +37,18 @@
 ;; => "hello from obj 3 with field x = asd"
 (hello n3)
 ;; => "hello from number 10"
+(hello :asd)
+;; => "umm.. hi?"
+
+(default-dispatch-fn 2)
+;; => (java.lang.Long
+;;     :default)
+(default-dispatch-fn n2)
+;; => ({:custom-class :num2}
+;;     {:custom-class :num}
+;;     :custom-class
+;;     java.lang.Long
+;;     :default)
 
 (+ n1 (/ n2 n3) 3)
 ;; => 63/10
