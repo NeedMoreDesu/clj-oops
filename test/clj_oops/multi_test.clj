@@ -1,47 +1,39 @@
 (ns test.clj-oops.multi-test
  (:use clj-oops.multi)
  (:use clj-oops.object)
- (:refer-clojure :exclude [+]))
+ (:use clj-oops.meta))
 
-(def n1 (obj-new :num 3))
+(def n1 (obj-new :num 3 {:x "qwe"}))
 (def n2 (obj-new :num2 n1 {:x "asd"}))
+(def n3 (obj-new :num3 10 {:y "zxc"}))
 
-(let [to-number
-      (mfn
-       :dispatch-fn
-       (fn [arg]
-        (if (number? arg)
-         [:number :default]
-         (default-dispatch-fn arg))))]
- (add-fn to-number :number identity)
- (add-fn to-number {:custom-class :num} #(% :basic))
- (def to-number to-number))
+(obj? n3)
+;; => true
+(obj? 10)
+;; => false
 
-(let [add (mfn)]
- (add-fn add :default
-  (fn [& args]
-   (apply clojure.core/+ (map to-number args))))
- (add-fn add {:custom-class :num}
-  (fn [arg & args]     ; can be sure that have atleast 1 arg
-   (obj-copy arg
-    {:basic
-     (arg
-      :basic
-      (fn [arg]
-       (apply add arg args)))})))
- (def + add))
+(let [hello
+      (mfn)]
+ (add-fn hello java.lang.Long
+  (fn [arg]
+   (str
+    "hello from number " arg)))
+ (add-fn hello {:custom-class :num}
+  (fn [arg]
+   (str
+    "hello from obj " arg " "
+    "with field x = " (-> arg obj-fields :x))))
+ (def hello hello))
+;; => #'test.clj-oops.multi-test/hello
 
-(+ 1 2 n1)
-;; => 6
-(+ n1 2 3)
-;; => #<obj :num {:basic 8}>
-(+ n2 n1 -1)
-;; => #<obj :num2 {:basic 5, :x "asd"}>
-(def n3 (n1 [+ 1] [+ n2] [+ 2]))
-n3
-;; => #<obj :num {:basic 9}>
-(n3 [+ 1000])
-;; => #<obj :num {:basic 1009}>
-((+ n2 10) [+ 200])
-;; => #<obj :num2 {:basic 213, :x "asd"}>
+(hello 2)
+;; => "hello from number 2"
+(hello n1)
+;; => "hello from obj 3 with field x = qwe"
+(hello n2)
+;; => "hello from obj 3 with field x = asd"
+(hello n3)
+;; => "hello from number 10"
 
+(+ n1 (/ n2 n3) 3)
+;; => 63/10

@@ -3,19 +3,18 @@
 (use 'clj-oops.object)
 
 (defn default-dispatch-fn [arg]
- (conj
-  (if (obj? arg)
-   (conj
-    (vec
-     (map
-      (fn [custom-class]
-       {:custom-class custom-class})
-      (conj
-       (obj-inheritance-list arg)
-       (obj-type arg))))
-    :custom-class)
-   [(type arg)])
-  :default))
+ `(~@(if (obj? arg)
+     (conj
+      (vec
+       (map
+        (fn [custom-class]
+         {:custom-class custom-class})
+        (conj
+         (obj-inheritance-list arg)
+         (obj-type arg))))
+      :custom-class))
+   ~(type arg)
+   :default))
 
 (defn mfn [& {:keys [multimap-ref default dispatch-fn]}]
  (let [multimap-ref

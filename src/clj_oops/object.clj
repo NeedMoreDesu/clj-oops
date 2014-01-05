@@ -1,15 +1,15 @@
 (ns clj-oops.object
- (:use [clojure.core.match :only (match)]))
+ (:use [clojure.core.match :only (match)])
+ (:use clj-oops.meta))
 
 (defn obj? [arg]
- (= ::custom-object (type arg)))
+ (= ::custom-object (:type (metadata arg))))
 (defn obj-type [arg]
- (:custom-object (meta arg)))
+ (:custom-object (metadata arg)))
 (defn obj-inheritance-list [arg]
- (:inheritance-list (meta arg)))
+ (:inheritance-list (metadata arg)))
 (defn obj-fields [arg]
- (:field-map (meta arg)))
-(def obj-basic :basic)
+ (:field-map (metadata arg)))
 
 (defn object-input-parse-internal [arg args]
  (match [args]
@@ -31,41 +31,31 @@
  (let [field-map
        (if (obj? basic-object)
         (into (obj-fields basic-object) field-map)
-        (into {:basic basic-object} field-map))
+        (into {} field-map))
        inheritance-list
        (if (obj? basic-object)
         (cons
-         (:custom-object (meta basic-object))
-         (:inheritance-list (meta basic-object))))
+         (obj-type basic-object)
+         (obj-inheritance-list basic-object)))
        meta
        {:type ::custom-object
         :custom-object class-name
         :field-map field-map
-        :inheritance-list inheritance-list}]
- (with-meta
-  (fn self [& args]
-   (object-input-parse-internal
-    (with-meta self meta)
-    args))
-  meta)))
-
-(defn obj-copy [object & [field-map]]
- (let [field-map
-       (into (obj-fields object) field-map)
-       meta (assoc (meta object)
-             :field-map field-map)] 
-  (with-meta
-   (fn self [& args]
-    (object-input-parse-internal
-     (with-meta self meta)
-     args))
+        :inheritance-list inheritance-list}
+       basic-object (unintern basic-object)]
+  (metadata
+   basic-object
    meta)))
 
-(defmethod print-method ::custom-object [o w]
- (print-simple
-  (str
-   "#<obj "
-   (obj-type o)
-   " "
-   (obj-fields o)
-   ">") w))
+(defn obj-copy
+ "Shallow copy"
+ [object & {:keys [field-map basic-object]}]
+ (let [field-map
+       (into (obj-fields object) field-map)
+       basic-object
+       (or basic-object object)
+       meta (assoc (metadata object)
+             :field-map field-map)]
+  (metadata
+   basic-object
+   meta)))
